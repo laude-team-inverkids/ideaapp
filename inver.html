@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idea App</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #696969;
+  color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+
+.nav-left span {
+  margin-right: 20px;
+  font-weight: 500;
+}
+
+.nav-right button {
+  background: #B0E0E6;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: #FFF8DC;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: scale(1.25);
+  transition: 0.2s;
+}
+
+.float-btn {
+  background: #2bbecb;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.float-btn:hover {
+  transform: scale(1.1);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.header h1 {
+  color: #B0E0E6;
+  font-size: 48px;
+  margin: 0;
+}
+
+.header p {
+  color: #40E0D0;
+}
+
+/* SEARCH */
+.search-box {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.search-box input {
+  width: 60%;
+  padding: 18px;
+  border-radius: 40px;
+  border: none;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* FILTER BUTTONS */
+.filters {
+  text-align: center;
+}
+
+.filters button {
+  margin: 10px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+}
+
+/* CONTENT */
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin: 40px;
+  gap: 20px;
+}
+
+.section {
+  width: 45%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.section h2 {
+  text-align: center;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.card {
+  height: 140px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* FLOAT BUTTON */
+.float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2bbecb;
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nav-left">
+    <span><b>Temcort</b></span>
+    <span>Faneriby</span>
+    <span>Courses</span>
+  </div>
+  <div class="nav-right">
+    <button>Servnent</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>is the time to imagine</h1>
+  <p>Search by creator & category.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-box">
+  <input type="text" placeholder="Search an idea">
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button>Your Inner</button>
+  <button>By Category</button>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="section">
+    <h2>Your ideas</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="">
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7" alt="">
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="">
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="section">
+    <h2>Recently viewed ideas</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="">
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/random/300x300?sig=2" alt="">
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/random/300x300?sig=3" alt="">
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/random/300x300?sig=4" alt="">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FLOAT BUTTON -->
+<div class="float-btn">✓</div>
+
+<!-- 🔥 SCRIPT SIMPLIFICADO -->
+<script>
+const input = document.querySelector(".search-box input");
+
+input.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    // Redirige siempre a resultados.html
+    window.location.href = "resultados.html";
+  }
+});
+</script>
+
+</body>
+</html>

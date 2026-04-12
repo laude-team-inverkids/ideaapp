@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Results</title>
+<style>
+body{font-family:'Segoe UI';background:#696969;color:white;margin:0;}
+.navbar{display:flex;justify-content:space-between;padding:20px 40px;background:#555;}
+.navbar button{background:#B0E0E6;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;}
+h1{text-align:center;}
+.container{display:flex;flex-wrap:wrap;justify-content:center;}
+.card{width:200px;height:140px;background:#eee;color:black;margin:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.card:hover{background:#2bbecb;color:white;}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div></div>
+  <button onclick="goHome()">Home</button>
+</div>
+
+<h1>Results</h1>
+<div class="container" id="results-container"></div>
+
+<script>
+function goHome(){ window.location.href="index.html"; }
+
+const params=new URLSearchParams(window.location.search);
+const query=(params.get("q")||"").toLowerCase();
+const container=document.getElementById("results-container");
+let ideas=JSON.parse(localStorage.getItem("ideas"))||[];
+container.innerHTML="";
+let filtered=ideas.filter(i=>i.title.toLowerCase().includes(query));
+if(filtered.length===0){ container.innerHTML="<p>No results</p>"; }
+filtered.forEach(idea=>{
+  const card=document.createElement("div");
+  card.className="card";
+  card.textContent=idea.title;
+  card.onclick=()=>{ window.location.href="idea.html?id="+idea.id; };
+  container.appendChild(card);
+});
+</script>
+
+</body>
+</html>

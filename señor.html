@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NEON MEMORY FINAL LEGEND</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:black;color:#0ff;font-family:'Orbitron';text-align:center;overflow:hidden;}
+#menu{position:fixed;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+h1{font-family:'Press Start 2P';font-size:24px;text-shadow:0 0 30px #0ff;}
+button{margin-top:20px;padding:12px 30px;border:2px solid #0ff;background:transparent;color:#0ff;cursor:pointer;}
+button:hover{background:#0ff;color:black;}
+.hud{display:flex;justify-content:center;gap:15px;margin-top:10px;font-size:12px;align-items:center;}
+#comboBar{width:160px;height:12px;background:#111;border:2px solid #0ff;border-radius:3px;overflow:hidden;}
+#comboFill{width:0%;height:100%;background:#ff0;transition:width 0.2s;}
+.grid{display:grid;grid-template-columns:repeat(4,90px);gap:12px;justify-content:center;margin-top:20px;}
+.card{width:90px;height:90px;perspective:600px;cursor:pointer;position:relative;}
+.inner{width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;position:relative;}
+.flipped .inner{transform:rotateY(180deg) rotateZ(5deg);}
+.front,.back{position:absolute;width:100%;height:100%;display:flex;justify-content:center;align-items:center;backface-visibility:hidden;border:2px solid #0ff;border-radius:8px;}
+.front{background:#050505;}
+.back{background:#0ff;color:black;transform:rotateY(180deg);font-size:28px;}
+.matched .back{background:#f0f;animation:glow2 0.5s infinite alternate;}
+@keyframes glow2{from{box-shadow:0 0 5px #ff0;}to{box-shadow:0 0 25px #ff0;}}
+.special{box-shadow:0 0 20px #ff0;animation:glow 1s infinite alternate;}
+@keyframes glow{from{box-shadow:0 0 5px #ff0;}to{box-shadow:0 0 25px #ff0;}}
+body::after{content:"";position:fixed;width:100%;height:100%;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 2px,rgba(0,0,0,0.2) 3px);pointer-events:none;}
+.particle{position:fixed;font-size:18px;pointer-events:none;animation:float 1s linear forwards;}
+@keyframes float{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-80px) scale(1.5);opacity:0;}}
+#bossBar{width:90%;height:15px;background:#111;margin:10px auto;border:2px solid #0ff;border-radius:5px;display:none;}
+#bossProgress{height:100%;width:0%;background:#f00;border-radius:3px;transition:width 0.2s;}
+</style>
+</head>
+<body>
+
+<div id="menu">
+<h1>NEON MEMORY FINAL LEGEND</h1>
+<p>HIGH SCORE: <span id="high">0</span></p>
+<button onclick="startGame()">START GAME</button>
+</div>
+
+<div id="game" style="display:none">
+<div class="hud">
+TIME: <span id="time">0</span> | MOVES: <span id="moves">0</span> | SCORE: <span id="score">0</span> | LEVEL: <span id="level">1</span>
+<div id="comboBar"><div id="comboFill"></div></div>
+</div>
+
+<div id="bossBar"><div id="bossProgress"></div></div>
+<div class="grid" id="grid"></div>
+<button onclick="usePower()">🔮 POWER: Reveal 3s</button>
+</div>
+
+<audio id="bgmusic" loop src="https://freesound.org/data/previews/341/341695_5260872-lq.mp3"></audio>
+
+<script>
+const symbols=['⚡','◆','⬢','✦','⬟','☢','☣','✪','💎','🔥','👑'];
+let level=1,cards,flipped,moves,score,matched,time,interval,bossInterval,combo=0;
+let high=localStorage.getItem("highscore")||0;
+document.getElementById("high").textContent=high;
+const grid=document.getElementById("grid");
+const bgmusic=document.getElementById("bgmusic");
+const bossBar=document.getElementById("bossBar");
+const bossProgress=document.getElementById("bossProgress");
+const comboFill=document.getElementById("comboFill");
+
+function beep(freq){const ctx=new AudioContext();const osc=ctx.createOscillator();osc.frequency.value=freq;osc.connect(ctx.destination);osc.start();setTimeout(()=>osc.stop(),100);}
+function startGame(){
+document.getElementById("menu").style.display="none";
+document.getElementById("game").style.display="block";
+bgmusic.play();
+let pairs=Math.min(3+level,symbols.length);
+let selected=symbols.slice(0,pairs);
+cards=[...selected,...selected].sort(()=>0.5-Math.random());
+let bossLevel=level%5===0;
+if(bossLevel){for(let i=0;i<2;i++) cards.push("💀"); alert("⚔️ Jefe Final! Cartas trampa 💀"); bossBar.style.display="block"; bossProgress.style.width="0%"; time=0; clearInterval(bossInterval); bossInterval=setInterval(()=>{time++; bossProgress.style.width=(time/30*100)+"%"; if(time>30){clearInterval(bossInterval); alert("💀 El jefe ganó! Nivel reiniciado"); startGame();}},1000);}else{bossBar.style.display="none";}
+if(!bossLevel){let specialIndex=Math.floor(Math.random()*cards.length); cards[specialIndex]+="*";}
+grid.innerHTML=""; flipped=[]; moves=0; matched=0; combo=0; time=0; updateHUD();
+clearInterval(interval); interval=setInterval(()=>{time++; updateHUD();},1000);
+cards.forEach(symbol=>{const card=document.createElement("div"); card.className="card"; if(symbol.includes("*")) card.classList.add("special"); card.dataset.symbol=symbol.replace("*",""); card.innerHTML=`<div class="inner"><div class="front">?</div><div class="back">${card.dataset.symbol}</div></div>`; card.onclick=()=>flip(card,bossLevel); grid.appendChild(card);});}
+
+function flip(card,bossLevel=false){
+if(flipped.length===2 || card.classList.contains("flipped")) return;
+card.classList.add("flipped"); flipped.push(card); beep(300);
+if(card.dataset.symbol==="💀"){ score-=100; beep(100); showParticles(card); combo=0;}
+if(card.classList.contains("special")){ showParticles(card); score+=50; beep(800); combo++;}
+if(flipped.length===2) setTimeout(()=>check(bossLevel),500);
+updateHUD();
+}
+function check(bossLevel=false){
+const [a,b]=flipped;
+if(a.dataset.symbol===b.dataset.symbol){a.classList.add("matched"); b.classList.add("matched"); matched++; score+=150+combo*20; combo++; showParticles(a); showParticles(b); beep(600);}
+else{a.classList.remove("flipped"); b.classList.remove("flipped"); if(a.dataset.symbol!=="💀") score-=30; combo=0; beep(150);}
+flipped=[]; updateHUD(); comboFill.style.width=Math.min(combo*20,100)+"%";
+if(matched===cards.length/2){if(bossLevel){score+=500; alert("🏆 ¡Jefe derrotado!"); clearInterval(bossInterval);}
+level++; setTimeout(startGame,500);}
+}
+function usePower(){document.querySelectorAll(".card").forEach(c=>{if(!c.classList.contains("matched")) c.classList.add("flipped");}); beep(1000); setTimeout(()=>{document.querySelectorAll(".card").forEach(c=>{if(!c.classList.contains("matched")) c.classList.remove("flipped");});},3000);}
+function showParticles(card){for(let i=0;i<8;i++){const p=document.createElement("div"); p.className="particle"; p.style.left=(card.getBoundingClientRect().left+Math.random()*90)+"px"; p.style.top=(card.getBoundingClientRect().top+Math.random()*90)+"px"; p.textContent=["✨","⚡","🔥","💥"][Math.floor(Math.random()*4)]; document.body.appendChild(p); setTimeout(()=>p.remove(),1200);}}
+function updateHUD(){document.getElementById("moves").textContent=moves; document.getElementById("time").textContent=time; document.getElementById("score").textContent=score; document.getElementById("level").textContent=level;}
+</script>
+</body>
+</html>

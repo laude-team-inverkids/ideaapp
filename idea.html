@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Idea</title>
+<style>
+body{font-family:'Segoe UI';background:#696969;color:white;text-align:center;padding:40px;}
+img{max-width:300px;border-radius:10px;margin-top:20px;}
+</style>
+</head>
+<body>
+
+<h1 id="title"></h1>
+<p id="desc"></p>
+<img id="img">
+
+<script>
+const params=new URLSearchParams(window.location.search);
+const id=params.get("id");
+let ideas=JSON.parse(localStorage.getItem("ideas"))||[];
+const idea=ideas.find(i=>String(i.id)===String(id));
+if(!idea){ document.body.innerHTML="<h1>No idea found</h1>"; }
+else{
+  document.getElementById("title").textContent=idea.title;
+  document.getElementById("desc").textContent=idea.desc;
+  if(idea.img)document.getElementById("img").src=idea.img;
+}
+</script>
+
+</body>
+</html>
