@@ -4,11 +4,45 @@
 <meta charset="UTF-8">
 <title>Idea</title>
 <style>
-body{font-family:'Segoe UI';background:#696969;color:white;text-align:center;padding:40px;}
-img{max-width:300px;border-radius:10px;margin-top:20px;}
+body{
+  font-family:'Segoe UI';
+  background:#696969;
+  color:white;
+  text-align:center;
+  padding:40px;
+}
+
+/* Botón Home */
+.home-btn{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:#B0E0E6;
+  border:none;
+  padding:10px 20px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:14px;
+  text-decoration:none;
+  color:black;
+}
+
+.home-btn:hover{
+  background:#2bbecb;
+  color:white;
+}
+
+img{
+  max-width:300px;
+  border-radius:10px;
+  margin-top:20px;
+}
 </style>
 </head>
 <body>
+
+<!-- Botón Home (SIN JS, más confiable) -->
+<a href="index.html" class="home-btn">Home</a>
 
 <h1 id="title"></h1>
 <p id="desc"></p>
@@ -17,13 +51,27 @@ img{max-width:300px;border-radius:10px;margin-top:20px;}
 <script>
 const params=new URLSearchParams(window.location.search);
 const id=params.get("id");
-let ideas=JSON.parse(localStorage.getItem("ideas"))||[];
+
+let ideas=[];
+try{
+  ideas=JSON.parse(localStorage.getItem("ideas"))||[];
+}catch(e){
+  ideas=[];
+}
+
 const idea=ideas.find(i=>String(i.id)===String(id));
-if(!idea){ document.body.innerHTML="<h1>No idea found</h1>"; }
-else{
+
+if(!idea){
+  document.body.innerHTML = `
+    <a href="index.html" class="home-btn">Home</a>
+    <h1>No idea found</h1>
+  `;
+}else{
   document.getElementById("title").textContent=idea.title;
   document.getElementById("desc").textContent=idea.desc;
-  if(idea.img)document.getElementById("img").src=idea.img;
+  if(idea.img){
+    document.getElementById("img").src=idea.img;
+  }
 }
 </script>
 
